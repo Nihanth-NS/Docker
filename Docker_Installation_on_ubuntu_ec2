@@ -1,0 +1,5 @@
+sudo apt update --> update new applications from internet
+sudo apt install docker.io -y --> Installs docker 
+sudo systemctl status docker --> To check the status of docker
+docker run hello-world --> To verify docker is available or not
+sudo usermod -aG docker ubuntu --> Docker needs admin permissions to run
