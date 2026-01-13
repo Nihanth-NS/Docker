@@ -1,0 +1,56 @@
+
+docker ps     --> To see the current active containers
+docker ps -a  --> To see the all containers which are already deleted.
+docker images --> To see the all images
+
+
+
+Docker installation on EC2 ubuntu
+
+sudo apt update --> update new applications from internet
+sudo apt install docker.io -y --> Installs docker 
+sudo systemctl status docker --> To check the status of docker
+docker run hello-world --> To verify docker is available or not
+sudo usermod -aG docker ubuntu --> Docker needs admin permissions to run
+
+Basic Docker File
+
+FROM ubuntu:latest --> Need an base image here we are using ubuntu os
+WORKDIR /app --> Creates app folder in a container and run the files in it.
+COPY . /app --> copies the current dir into app folder
+RUN apt-get update && apt-get install -y python3 python3-pip --> Run the dependencies and install required.
+ENV NAME World --> sets env variables NAME=World
+CMD["python3","app.py"] --> Runs the app.py file with python3
+
+Docker Build
+--> Converts the docker file to docker image.
+    -> docker build -t nihanth/hello_app:latest .
+       -> -t is tag
+       -> nihanth is username for dockerhub
+       -> hello_app is repo name is docker hub
+       -> latest is the tag name(generally it will be versions)
+       -> . Checks for dockerfile in current dir and coverts it into image
+    -> docker build -f /path/to/folder -t nihanth/hello_app:v1 .
+        -> -f is where we can give the path to dockerfile
+
+Docker Run
+--> Converts the docker image to docker container, the container will be created when we use this command and automatically deletes when cmds are runned in docker file.
+    -> docker run -it nihanth/hello_app:latest
+       -> -it is a iteractive terminal where we can go to container and can run cmds
+    -> docker create <image_name>
+       -> This will only create container from image.
+    -> docker start <conatiner_id>
+       -> Starts the container
+    -> docker run -it <image_id> tail -f /dev/null
+       -> Runs the container but doesn't exit
+
+Docker Registry
+--> Registry is like a github where we can push and pull images from docker hub.
+    -> docker login
+       -> Login in to the docker hub
+    -> docker push username/reponame:tag
+       -> This will push the image to docker hub
+    -> docker pull uname/reponame:tag
+       -> pulls the image from docker hub
+
+
