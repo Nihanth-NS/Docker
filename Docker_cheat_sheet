@@ -13,15 +13,6 @@ sudo systemctl status docker --> To check the status of docker
 docker run hello-world --> To verify docker is available or not
 sudo usermod -aG docker ubuntu --> Docker needs admin permissions to run
 
-Basic Docker File
-
-FROM ubuntu:latest --> Need an base image here we are using ubuntu os
-WORKDIR /app --> Creates app folder in a container and run the files in it.
-COPY . /app --> copies the current dir into app folder
-RUN apt-get update && apt-get install -y python3 python3-pip --> Run the dependencies and install required.
-ENV NAME World --> sets env variables NAME=World
-CMD["python3","app.py"] --> Runs the app.py file with python3
-
 Docker Build
 --> Converts the docker file to docker image.
     -> docker build -t nihanth/hello_app:latest .
@@ -53,4 +44,52 @@ Docker Registry
     -> docker pull uname/reponame:tag
        -> pulls the image from docker hub
 
+Docker File 1
 
+FROM ubuntu:latest --> Need an base image here we are using ubuntu os
+WORKDIR /app --> Creates app folder in a container and run the files in it.
+COPY . /app --> copies the current dir into app folder
+RUN apt-get update && apt-get install -y python3 python3-pip --> Run the dependencies and install required.
+ENV NAME World --> sets env variables NAME=World
+CMD["python3","app.py"] --> Runs the app.py file with python3
+
+----------------------------------------------------------------------
+
+Docker File 2 (check the files here https://github.com/Nihanth-NS/Docker-Zero-to-Hero/tree/main/examples/python-web-app)
+  NOTE ::: THIS DOCKER FILE WILL NOT ABLE TO CREATE IMAGE BEACUSE UBUNTU IS NOT ALLOWING EXTERNAL INSTALLATIONS
+FROM ubuntu
+WORKDIR /app
+COPY requriments.txt /app/ --> copying req.txt file to the container
+COPY devops /app/  --> copying devops file which contains entire python code(django) to the container
+RUN apt-get update &&/
+    apt-get install -y python3 python3-pip &&/
+    pip install -r requriments.txt &&/  --> -r read from file
+    cd devops
+ENTRYPOINT ["python3"] --> Entry point is where it will run default where we can't override it (default : python3 manage.py runserver 0.0.0.0:8000) 
+CMD ["manage.py","runserver","0.0.0.0:8000"]
+
+---> Here we are running django application by 
+      ---> docker run -p 8000:8000 <image id> (default : python3 manage.py runserver 0.0.0.0:8000)
+           -p is where we need to open port <host port:app port> by giving this we can access the application 
+              from outside else the application only runs inside container and we can't access it.
+      ---> docker run -p 8000:8000 <image id> app.py runserver 0.0.0.0:8000
+            Here we are overriding the cmds, instead of manage.py we are using app.py
+
+
+----------------------------------------------------------------------
+Docker File 3 (check the files here https://github.com/Nihanth-NS/Docker-Zero-to-Hero/tree/main/examples/python-web-app)
+
+FROM ubuntu
+WORKDIR /app
+COPY requriments.txt /app/
+COPY devops /app/
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv 
+SHELL ["/bin/bash","-c"] ----> by default linux uses /bin/sh which is not support for source cmd so we are switching to /bin/bash
+RUN python3 -m venv venv1 &&/ ---> creating virtual environment with name venv1
+    source venv1/bin/activate &&/ ---> activating the venv1 with source cmd
+    pip install -no-cache-dir -r requriments.txt ---> Installing reqs in the venv1 and close it
+EXPOSE 8000 ---> Expose tells that we are using 8000 port it will not open any port.
+CMD source venv1/bin/activate && python3 manage.py runserver 0.0.0.0:8000 ----> here we are activating the VM and running the manage.py
+
+----> This is same as above docker application i.e. we are running django application here by installing python 
+      and creating virtual environment(venv) and installing all requriments there
