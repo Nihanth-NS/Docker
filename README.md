@@ -205,6 +205,56 @@ This message shows that your installation appears to be working correctly.
 ...
 ```
 
+## Multi-stage Builds
+
+Multi-stage build is where having one dockerfile with multiple stages, used because
+   --> It will reduce image size.
+   --> Better security because it has only some dependencies.
+   --> Removes Build tools
+
+<img width="2293" height="1523" alt="image" src="https://github.com/user-attachments/assets/38b45470-79b2-4c45-9b7e-d4284809a525" />
+
+### Example for Multistage build
+
+##### Stage 1: Build the Go application
+FROM golang:1.22 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o main .
+
+##### Stage 2: Create a minimal runtime image
+FROM alpine:latest
+WORKDIR /root/
+##### Install necessary certificates for network communication
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /app/main .
+CMD ["./main"]
+
+## Distroless Images
+
+Distroless images are where the base images contains only minimal packages requried to run the application. for example 
+             python gives only python runtime(even bash packages will not be installed)
+             java gives only java runtime
+      --> This will reduce the image size.
+      --> Better Security
+      
+### Example for Distroless
+#### Stage 1: Build dependencies in a standard image with a package manager and shell
+FROM python:3.11-slim as builder
+WORKDIR /app
+#### You could install dependencies here if needed, e.g., RUN pip install ...
+COPY . .
+
+#### Stage 2: Create the final distroless runtime image
+FROM gcr.io/distroless/python3.11
+WORKDIR /app
+#### Copy the application code from the builder stage
+COPY --from=builder /app .
+#### Define the command to run the application
+CMD ["app.py"]
+
+
+
 
 
 
