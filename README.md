@@ -208,9 +208,11 @@ This message shows that your installation appears to be working correctly.
 ## Multi-stage Builds
 
 Multi-stage build is where having one dockerfile with multiple stages, used because
+```
    --> It will reduce image size.
    --> Better security because it has only some dependencies.
    --> Removes Build tools
+```
 
 <img width="2293" height="1523" alt="image" src="https://github.com/user-attachments/assets/38b45470-79b2-4c45-9b7e-d4284809a525" />
 
