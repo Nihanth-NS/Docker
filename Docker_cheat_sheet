@@ -44,6 +44,7 @@ Docker Registry
     -> docker pull uname/reponame:tag
        -> pulls the image from docker hub
 
+
 Docker File 1
 
 FROM ubuntu:latest --> Need an base image here we are using ubuntu os
