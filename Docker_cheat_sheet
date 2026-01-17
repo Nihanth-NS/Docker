@@ -5,6 +5,7 @@ docker images --> To see the all images
 
 
 
+
 Docker installation on EC2 ubuntu
 
 sudo apt update --> update new applications from internet
@@ -44,7 +45,45 @@ Docker Registry
     -> docker pull uname/reponame:tag
        -> pulls the image from docker hub
 
+Docker Networking
+    --> Bridge networking is default networking for docker
+ To check the networks
+    -> Docker network ls
+ To create own network
+    -> docker network create -d bridge <bridge_name>
+ To attach bridge network to new container
+    -> docker run -d --net=<bridge_name> --name <container_name> <image_name>
+         docker run -d --net=new_bridge --name nginx_container nginx:latest
+ To login into container
+    -> docker exec -it <container_name> /bin/bash
+         docker exec -it nginx_container /bin/bash ---> /bin/bash: loads up the bash
+ To inscept(gives all details about the container even ip address of container>
+    -> docker inspect <container_name>
+         docker inscept nginx_container
 
+----------------------------------------------------------------------
+Networking_Example_project
+
+Create an EC2 instance.
+Create a new bridge network (custom Docker bridge network).
+Create three containers:
+    login
+    logout
+    finance
+Attach the existing default bridge network to:
+    login container
+    logout container
+Attach the new custom bridge network to:
+    finance container
+Inspect the logout container and note down its IP address.
+Exec (SSH) into the login container and test connectivity:
+    Ping the logout container → packets are received (same network).
+    Ping the finance container → packets are not received (different network).
+Attach another container to the host network.
+When inspecting the container, you will not see a separate container IP, because:
+It uses the host network mode, meaning it shares the host machine’s network stack and IP address.
+
+----------------------------------------------------------------------
 Docker File 1
 
 FROM ubuntu:latest --> Need an base image here we are using ubuntu os
