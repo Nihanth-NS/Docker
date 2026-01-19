@@ -61,6 +61,8 @@ Docker Networking
     -> docker inspect <container_name>
          docker inscept nginx_container
 
+
+
 ----------------------------------------------------------------------
 Networking_Example_project
 
@@ -83,6 +85,32 @@ Attach another container to the host network.
 When inspecting the container, you will not see a separate container IP, because:
 It uses the host network mode, meaning it shares the host machine’s network stack and IP address.
 
+----------------------------------------------------------------------
+Docker Bind Mounts
+
+ Create a bind mount
+   - Create a file in host and add some data:
+       mkdir src1
+       cd src1
+       echo "Msg from host" > shared.txt
+
+   - Mount it to a container:
+       docker run -it \
+         --mount type=bind,source=$(pwd)/src1,target=/app \
+         ubuntu \
+         /bin/bash
+
+     → We run the container interactively with the Ubuntu image.
+     → We launch /bin/bash so the container does not exit immediately.
+     → The folder /app inside the container is directly linked to src1 on the host.
+
+Docker Volumes
+  Create Volume
+    docker volume create <volume_name> :- volume will be stored in /var/lib/docker/volumes/<volume_name>/_data in host
+  List of Volumes
+    docker volume ls
+  To create container and attach Volume to a container
+    docker run -it --mount type=volume,source=<volume_name>,target=/app --name <container_name> <image_name>
 ----------------------------------------------------------------------
 Docker File 1
 
