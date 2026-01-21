@@ -1,1 +1,252 @@
+What is DOCKER-COMPOSE
+  Docker-compose is handling multiple containers in local(generally used handling multiple microservices) so the developer will not execute run and build 
+  commands every time they make changes the program files instead they can run one docker-compose yaml file.
+    USED FOR:
+      - Local development
+      - Testing of applications
+      - Running small apps
+
+What is the use of the docker swarm then?
+     Docker swarm and docker compose are total different
+         docker compose is only used to build and run the images in a single host by using single yaml file(docker-compose.yml)
+         docker swarm is where it will handle containers accross multiple hosts as a cluster.
+     To simply put:
+        DOCKER-COMPOSE: One Machine Orchestration
+         A tool that manages multiple containers on one host using a YAML file. Ideal for local development and testing.
+        Docker-swarm: Many Machines Orchestration
+         Docker’s built‑in orchestrator that manages containers across many hosts, providing scaling, load balancing, and high availability.
+
+Basic Compose file for 3-tier architecture: nginx-nodejs-redis: (https://github.com/Nihanth-NS/awesome-compose/tree/master/nginx-nodejs-redis)
+Outline of this project:
+  This project shows the user a 3 tier architecture where nginx acts as frontend, nodejs as backend and redis a data layer. when user loads the page the 
+   shows the count how many times user has requested and from which container iam getting the data.
+  This repo consists of nginx and web folders
+                                                               nginx-nodejs-redis
+                                                                       |-----> compose.yml
+                                                              Web<-----|-----> nginx
+                                                  server.js<--|                  |-->Dockerfile
+                                               package.json<--|                  |-->nginx.conf
+                                          package-lock.json<--|
+                                                 Dockerfile<--|
+                                                 .gitignore<--|
+  Nginx:
+    nginx.conf:
+      Here nginx.conf file tells where to send data and where to listen and we are sending data to port 5000 and listening on port 80. nginx acts as 
+      frontend i.e reverse proxy, recevices all the user requests, forwards to backend(nodejs), does load balancing.
+    Dockerfile:
+      Creates images based on docker file where compose runs use images created from docker file.
+  Web:
+    server.js:
+      It is main logic file in nodejs acts as backend, it creates redis session and increase the count if user has given request(reload), where redis 
+      will be on port 6379 and nodejs runs on port 5000.
+    package.json:
+      This is the main file that tells how to start the application, project version, which libraries are needed.
+    package-lock.json:
+      This file will tell the exact versions that need to be installed.
+    Dockerfile
+      Create a image by using the above three files.
+  Compose.yml
+     services:
+        redis:( we can change name as required)
+          image: 'redislabs/redismod'
+          ports:
+            - '6379:6379'
+        web1:
+          restart: on-failure
+          build: ./web
+          hostname: web1
+          ports:
+            - '81:5000'
+        web2:
+          restart: on-failure
+          build: ./web
+          hostname: web2
+          ports:
+            - '82:5000'
+        nginx:
+          build: ./nginx
+          ports:
+          - '8080:80'
+          depends_on:
+          - web1
+          - web2
+
+    - Here there are 4 services i.e 4 containers will be created.
+        redis: redis used redislabs/redismod image to create a contianer and port 6379 is opened for listening.
+        web1: Created a container from .web folder docker file which it will run on port 5000 and we can access it in port 80
+        web2: same as web1
+        nginx: Created container from .nginx docker file which it will work on port 80 and we can access it in port 8080 and this container depends on web1 and web2
+               if both containers are running then only nginx container will be up.
+
+    - Use the compose.yml file by running docker-compose up and use docker-compose down to close the containers
+    - We can access the compose file by running http://public-ip:8080
+
+
+PORT-MAPPING:
+  - lets say we are using ec2 instance and running docker, inside container when we are running applications but a user can't the container directly so we will
+    port map our host port to container port so when we can access the applications running inside the container using the hostip:hostport
+
+   
+  For example:
+       lets say container running the jenkins application in port 8080 and we a user need to access it, so we use -p 6767:8080 i.e hsot port : conatiner/application port
+       now we can access it using http://public-ip:hostport i.e. http://192.168.10.7:6767
+
+       We will use it while running docker run -p 6767:8080 <image_name>
+ 
+
+  
+  
+
+What is Docker Compose?
+Docker Compose is a tool used to manage and run multiple containers on a single machine using one YAML file (docker-compose.yml).
+It is especially useful for working with multiple microservices during local development.
+Instead of manually running build/run commands for every update, developers can simply use:
+  docker-compose up
+  docker-compose down
+Used For
+  Local development
+  Application testing
+  Running small applications on a single host
+
+- How docker swarm is different from docker compose.
+  Docker swarm and docker compose are total different
+         docker compose is only used to build and run the images in a single host by using single yaml file(docker-compose.yml)
+         docker swarm is where it will handle containers accross multiple hosts as a cluster.
+     To simply put:
+        DOCKER-COMPOSE: One Machine Orchestration
+         A tool that manages multiple containers on one host using a YAML file. Ideal for local development and testing.
+        Docker-swarm: Many Machines Orchestration
+         Docker’s built‑in orchestrator that manages containers across many hosts, providing scaling, load balancing, and high availability.
+
+
+3‑Tier Architecture Using Docker Compose
+nginx + nodejs + redis
+Repository: https://github.com/Nihanth-NS/awesome-compose/tree/master/nginx-nodejs-redis
+Project Overview
+This project demonstrates a simple 3‑tier architecture:
+
+NGINX → Frontend (Reverse Proxy / Load Balancer)
+Node.js → Backend
+Redis → Data layer (stores request count)
+
+When the user loads the page, the app displays:
+
+The number of times the page has been requested
+The backend container that served the request
+
+
+Project Structure
+nginx-nodejs-redis
+│
+├── compose.yml
+│
+├── web
+│   ├── server.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── Dockerfile
+│   └── .gitignore
+│
+└── nginx
+    ├── Dockerfile
+    └── nginx.conf
+
+
+Component Details
+NGINX
+nginx.conf
+
+Listens on port 80
+Forwards incoming requests to the backend on port 5000
+Acts as a reverse proxy
+Performs load balancing between web1 and web2
+
+Dockerfile
+Builds the NGINX image used in docker-compose.
+
+Web (Node.js Backend)
+server.js
+
+Main backend logic
+Connects to Redis
+Increments request count
+Runs on port 5000
+
+package.json
+
+Defines dependencies
+Contains project metadata
+Specifies how the app starts
+
+package-lock.json
+  Locks exact dependency versions
+
+Dockerfile
+    Builds the Node.js application image
+
+
+Docker Compose File
+
+services:
+  redis:
+    image: 'redislabs/redismod'
+    ports:
+      - '6379:6379'
+
+  web1:
+    restart: on-failure
+    build: ./web
+    hostname: web1
+    ports:
+      - '81:5000'
+
+  web2:
+    restart: on-failure
+    build: ./web
+    hostname: web2
+    ports:
+      - '82:5000'
+
+  nginx:
+    build: ./nginx
+    ports:
+      - '8080:80'
+    depends_on:
+      - web1
+      - web2
+
+
+redis → Runs using redislabs/redismod
+web1 / web2 → Node.js backend containers
+nginx → Accessible on port 8080
+depends_on ensures NGINX starts only after both web containers are running
+
+Commands
+Start all containers:
+   docker-compose up
+Stop and remove all containers:
+   docker-compose down 
+Access the application:
+   http://PUBLIC-IP:8080
+
+
+Port Mapping:
+When running applications inside containers, users cannot directly access internal container ports.
+So port mapping is used:
+HOST_PORT : CONTAINER_PORT
+
+Example
+If Jenkins runs inside the container on port 8080, map it like this:
+  docker run -p 6767:8080 <image-name>
+Now the application is accessible at:
+http://PUBLIC-IP:6767
+
+
+
+
+
+
+
+
+
 
