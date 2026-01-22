@@ -2,6 +2,21 @@
 docker ps     --> To see the current active containers
 docker ps -a  --> To see the all containers which are already deleted.
 docker images --> To see the all images
+docker ps -q --> gives only running container ids
+docker ps -aq --> gives all container ids
+docker images -q --> gives images ids
+docker rm <container> ---> to delete container
+docker rm $(docker ps -aq) --> to delete all containers existing
+docker rmi <image> --> to delete image
+docker rmi $(docker images -q) --> to delete all images
+docker run -itd --name web-app -p 8080:8000 <image_name> ---> Runs the container in discrete(back ground) with name web-app and open port 8080 on host side
+                                                              and 8000 and container side so we can access caontainer application at port 8080.
+docker build -f /path/to/Dockerfile -t hello-hi . ---> Buils the image from docker taken from -f docker file path by giving -t tags for images generally 
+                                                       hub username/repo name:current_version and . tells build the to use current dir to take files.
+docker run -itd -e abc=def <image_name> ---> -e is Setting the environment variables for the container.
+docker run -itd -e abc <image_name> --> if a env variable already exists in our machine.
+docker run -d --env /path/to/env_file <image> --> when a multiple envs present in a file we can pass file using --env.
+docker inspect <cont_name> ---> we can check all the details regarding container including the env variables.
 
 
 
