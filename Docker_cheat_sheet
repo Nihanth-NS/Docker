@@ -17,7 +17,15 @@ docker run -itd -e abc=def <image_name> ---> -e is Setting the environment varia
 docker run -itd -e abc <image_name> --> if a env variable already exists in our machine.
 docker run -d --env /path/to/env_file <image> --> when a multiple envs present in a file we can pass file using --env.
 docker inspect <cont_name> ---> we can check all the details regarding container including the env variables.
-
+docker login --> to login into registry
+docker push image name --> To push image to registry
+docker pull image -->to pull from registry
+docker image tag <old_image_name> <new_image_name> ---> to change image name
+docker image prune --> delete images which has no tags, partial builds
+docker image prune -a --> delete images which are not being used
+docker volume ls ---> list of volumes
+docker volume create <Volume_name> ---> creating volume
+docker run -d --name <cont_name> --mount type=<bind or volume>,src=<voulume name or path if bind>,target=<where to store in host> <image_name> ---> to attach volume to a container.
 
 
 
