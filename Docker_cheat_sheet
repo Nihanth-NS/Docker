@@ -26,6 +26,10 @@ docker image prune -a --> delete images which are not being used
 docker volume ls ---> list of volumes
 docker volume create <Volume_name> ---> creating volume
 docker run -d --name <cont_name> --mount type=<bind or volume>,src=<voulume name or path if bind>,target=<where to store in host> <image_name> ---> to attach volume to a container.
+docker network ls --> gives list of networks present in host
+docker network create --driver bridge --subnet=<ip> --gateway=<ip> <name_of_network> ---> Creating a network with drive bridge 
+docker run -d --net=<network_name> --name <c_name> <image> ---> attaching the network to a container.
+
 
 
 
